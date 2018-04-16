@@ -70,7 +70,7 @@ router.post('/signup', function (req, res) {
 
                 console.log('saved!');
                 var token = jwt.sign({ foo: "bar" }, config.secret, {
-                    expiresIn: 1440
+                    expiresIn: 60*24*1440
                 });
                 res.json({ success: true, token: token });
             })
