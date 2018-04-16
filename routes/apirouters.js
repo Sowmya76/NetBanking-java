@@ -155,24 +155,19 @@ apiRouter.post('/miniStatement', function(req, res) {
             console.log(transact)
             var array = []
             itemProcessed = 0;
-            transact.forEach((el, index, array) => {
-                asynchronous(function(data) {
-                    console.log(item)
+            
+            transact.forEach(el => {
+                Transaction.findById(el, function(err, doc) {
+                    if(err) return res.send(500, { success: false, message: err })
+                    if(!doc) return res.send(404, { success: false, message: 'No transactions' })
+                    array.push(doc)
+                    console.log(doc)
                     itemProcessed++;
-                    array.pus(item)
-                    if(itemsProcessed === array.length) {
-                        callback(array);
+                    if(itemProcessed === transact.length) {
+                        res.send(array)
                     }
                 })
             });
-            //transact.forEach(el => {
-                //Transaction.findById(el, function(err, doc) {
-                    /*if(err) return res.send(500, { success: false, message: err })
-                    if(!doc) return res.send(404, { success: false, message: 'No transactions' })*/
-                    //array.push(doc)
-                    //console.log(doc)
-                //})
-            //});
             //res.send(array)
         }
     })
