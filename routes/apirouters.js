@@ -168,7 +168,7 @@ apiRouter.post('/miniStatement', function (req, res) {
                     array.push(doc)
                     console.log(doc)
                     itemProcessed++;
-                    if (itemProcessed === 3) {
+                    if (itemProcessed === transact.length) {
                         return res.send(array)
                     }
                 })
