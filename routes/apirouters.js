@@ -163,12 +163,24 @@ apiRouter.post('/miniStatement', function(req, res) {
                     array.push(doc)
                     console.log(doc)
                     itemProcessed++;
-                    if(itemProcessed === transact.length) {
-                        res.send(array)
+                    if(itemProcessed === 3) {
+                        return res.send(array)
                     }
                 })
             });
             //res.send(array)
+        }
+    })
+})
+
+app.post('/debtPaying', (req, res) => {
+    User.findOne({ uname: req.body.uname }, function(err, user) {
+        if(err) return res.json({ success: false, message: err})
+        if(!usr) return res.json({ success: false, message: 'No usr'})
+        else {
+            var interestRate = user.creditAccount.interestRate;
+            var currentTransactionNo;
+
         }
     })
 })
