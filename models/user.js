@@ -16,7 +16,7 @@ module.exports = mongoose.model('User', new Schema({
         balance: Number,
         interestRate: Number,
         numOfpayments: Number,
-        currentpayment: Number
+        currentInstallmentNo: Number
     },
     password: String,
     security: {
