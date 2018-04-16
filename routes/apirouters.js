@@ -117,8 +117,20 @@ apiRouter.post('/transaction', function(req, res) {
             })
         }
         else {
-            User.findOneAndUpdate({ debitAccount: req.body.payer }, { $push: { transactions: trans.id }})
-            User.findOneAndUpdate({ debitAccount: req.body.payee }, { $push: { transactions: trans.id }})
+            User.update({ debitAccount: req.body.payer }, { $push: { transactions: trans.id }}, function(err, doc) {
+                if(err) return res.json({
+                    success: false,
+                    message: err
+                })
+                console.log(doc)
+            })
+            User.update({ debitAccount: req.body.payee }, { $push: { transactions: trans.id }}, function(err, doc) {
+                if(err) return res.send({
+                    success: false,
+                    message:err
+                })
+                console.log(doc)
+            })
             console.log('Transaction Complete!');
             res.json({
                 success: true,
@@ -126,6 +138,43 @@ apiRouter.post('/transaction', function(req, res) {
             })
         }
        
+    })
+})
+
+function callback(arr) {
+    res.send(200, arr)
+}
+
+apiRouter.post('/miniStatement', function(req, res) {
+    User.findOne({ uname: req.body.uname }, function(err, user) {
+        if(err) return res.send(500, { success: false, message: err })
+        if(!user) return res.send(404, { success: false, message: 'User not found'})
+        else {
+            console.log(user);
+            var transact = user.transactions;
+            console.log(transact)
+            var array = []
+            itemProcessed = 0;
+            transact.forEach((el, index, array) => {
+                asynchronous(function(data) {
+                    console.log(item)
+                    itemProcessed++;
+                    array.pus(item)
+                    if(itemsProcessed === array.length) {
+                        callback(array);
+                    }
+                })
+            });
+            //transact.forEach(el => {
+                //Transaction.findById(el, function(err, doc) {
+                    /*if(err) return res.send(500, { success: false, message: err })
+                    if(!doc) return res.send(404, { success: false, message: 'No transactions' })*/
+                    //array.push(doc)
+                    //console.log(doc)
+                //})
+            //});
+            //res.send(array)
+        }
     })
 })
 
