@@ -42,7 +42,7 @@ router.post('/signup', function (req, res) {
                 },*/
                 password: hashed,
                 debitAccount: req.body.debitAccount,
-                
+
                 creditAccount: {
                     accountNumber: req.body.creditAccount.accountNumber,
                     maxCredit: req.body.creditAccount.maxCredit,
@@ -60,11 +60,17 @@ router.post('/signup', function (req, res) {
             })
 
             newUser.save(function (err) {
-                if (err) throw err;
+                if (err) { 
+                    console.log(err); 
+                    res.json({
+                        success: false,
+                        message: "Trouble signing up!"
+                    })
+                }
 
                 console.log('saved!');
                 var token = jwt.sign({ foo: "bar" }, config.secret, {
-                    expiresIn: 1440
+                    expiresIn: 60*24*1440
                 });
                 res.json({ success: true, token: token });
             })
@@ -99,7 +105,7 @@ router.post('/login', function (req, res) {
                         success: true,
                         message: 'Enjoy your Token',
                         token: token,
-                        debitAccount:user.debitAccount
+                        debitAccount: user.debitAccount
                     })
                 }
             }

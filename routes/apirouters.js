@@ -86,8 +86,15 @@ apiRouter.post('/balance', (req, res) => {
 
 apiRouter.post('/transaction', function(req, res) {
     var transactionAmount = req.body.amount;
-    User.update({'debitAccount.accountNumber': req.body.payer}, {$inc: { 'balance.debit': transactionAmount}});
-    User.update({'debitAccount.accountNumber': req.body.payee}, {$inc: { 'balance.debit': -1*transactionAmount}});
+    console.log(-1*transactionAmount)
+    User.update({debitAccount: req.body.payer}, {$inc: { 'balance.debit': transactionAmount}}, function(err, doc) {
+        if(err) return res.send(500, { success: false, message: err })
+        console.log(doc)
+    });
+    User.update({debitAccount: req.body.payee}, {$inc: { 'balance.debit': -1*transactionAmount}}, function(err, doc){
+        if(err) return res.send(500, { success: false, message: err })
+        console.log(doc)
+    });
     var transaction = new Transaction({
         payee: req.body.payee,
         payer: req.body.payer,
@@ -96,20 +103,29 @@ apiRouter.post('/transaction', function(req, res) {
     transaction.save(function (err, trans) {
         if(err) {
             console.log(err);
-            User.update({'debitAccount.accountNumber': req.body.payer}, {$inc: { 'balance.debit': -1*transactionAmount}});
-            User.update({'debitAccount.accountNumber': req.body.payee}, {$inc: { 'balance.debit': transactionAmount}});
+            User.findOneAndUpdate({debitAccount: req.body.payer}, {$inc: { 'balance.debit': -1*transactionAmount}}, function(err, doc) {
+                if(err) return res.json({
+                    success: false,
+                    message: err
+                })
+                console.log(doc)
+            });
+            User.update({debitAccount: req.body.payee}, {$inc: { 'balance.debit': transactionAmount}});
             res.json({
                 success: false,
                 message: 'Transaction failed!'
             })
         }
-        User.findOneAndUpdate({ 'debitAccount.accountNumber': req.body.payer }, { $push: { transactions: trans.id }})
-        User.findOneAndUpdate({ 'debitAccount.accountNumber': req.body.payee }, { $push: { transactions: trans.id }})
-        console.log('Transaction Complete!');
-        res.json({
-            success: true,
-            message: "Transaction Successful!"
-        })
+        else {
+            User.findOneAndUpdate({ debitAccount: req.body.payer }, { $push: { transactions: trans.id }})
+            User.findOneAndUpdate({ debitAccount: req.body.payee }, { $push: { transactions: trans.id }})
+            console.log('Transaction Complete!');
+            res.json({
+                success: true,
+                message: "Transaction Successful!"
+            })
+        }
+       
     })
 })
 
