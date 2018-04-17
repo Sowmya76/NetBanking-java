@@ -47,8 +47,9 @@ router.post('/signup', function (req, res) {
                     accountNumber: req.body.creditAccount.accountNumber,
                     maxCredit: req.body.creditAccount.maxCredit,
                     balance: req.body.creditAccount.balance,
-                    interestRate: req.body.interestRate,
-                    numOfpayments: req.body.interest
+                    interestRate: req.body.creditAccount.interestRate,
+                    numOfpayments: req.body.creditAccount.numOfpayments,
+                    currentInstallmentNo: req.body.creditAccount.currentInstallmentNo
                 }, security: {
                     question: req.body.security.question,
                     answer: req.body.security.question
@@ -60,8 +61,8 @@ router.post('/signup', function (req, res) {
             })
 
             newUser.save(function (err) {
-                if (err) { 
-                    console.log(err); 
+                if (err) {
+                    console.log(err);
                     res.json({
                         success: false,
                         message: "Trouble signing up!"
@@ -70,7 +71,7 @@ router.post('/signup', function (req, res) {
 
                 console.log('saved!');
                 var token = jwt.sign({ foo: "bar" }, config.secret, {
-                    expiresIn: 60*24*1440
+                    expiresIn: 60 * 24 * 1440
                 });
                 res.json({ success: true, token: token });
             })
