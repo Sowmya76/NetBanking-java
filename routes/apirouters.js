@@ -186,7 +186,7 @@ apiRouter.post('/debtPaying', (req, res) => {
             var Interest = 0;
             var interestRate = user.creditAccount.interestRate;
             var currentTransactionNo = user.creditAccount.currentInstallmentNo + 1;
-            if (currentTransactionNo === user.creditAccount.numOfpayments) {
+            if (req.body.settleUp || currentTransactionNo === user.creditAccount.numOfpayments) {
                 Interest = (user.creditAccount.maxCredit - user.balance.credit) * interestRate * currentTransactionNo / 100 + (user.creditAccount.maxCredit - user.balance.credit);
                 console.log("last transaction"+Interest)
                 if (Interest < user.balance.debit) {
