@@ -34,5 +34,5 @@ app.get('/', (req, res) => {
     res.send('a bit more detailed shit, maybe?');
 })
 
-app.listen(port, '172.16.34.30');
+app.listen(port);
 console.log('http://localhost:' + port);
